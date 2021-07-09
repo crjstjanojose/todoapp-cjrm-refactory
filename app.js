@@ -2,31 +2,35 @@ const formAaddTodo = document.querySelector(".form-add-todo");
 const inputSearchTodo = document.querySelector(".form-search input");
 const todosContainer = document.querySelector(".todos-container");
 
-formAaddTodo.addEventListener("submit", (event) => {
+const insertHTML = (textValue) => {
+  todosContainer.innerHTML += `
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+    <span>${textValue}</span>
+    <i class="far fa-trash-alt delete text-danger"></i>
+    </li>
+    `;
+};
+
+const addTodo = (event) => {
   event.preventDefault();
   const todoValue = event.target.add.value.trim();
 
   if (todoValue.length) {
-    todosContainer.innerHTML += `
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-    <span>${todoValue}</span>
-    <i class="far fa-trash-alt delete"></i>
-    </li>
-    `;
+    insertHTML(todoValue);
   }
-
   event.target.reset();
-});
+};
 
-todosContainer.addEventListener("click", (event) => {
+const deleteTodo = (event) => {
   const clickedElement = event.target;
 
+  // Parte Maior -> Dúvida na Varredura do DOM
   if (Array.from(clickedElement.classList).includes("delete")) {
-    clickedElement.parentElement.remove();
+    clickedElement.previousSibling.parentNode.remove();
   }
-});
+};
 
-inputSearchTodo.addEventListener("input", (event) => {
+const filterTodo = (event) => {
   const inputValue = event.target.value.toLowerCase().trim();
 
   Array.from(todosContainer.children)
@@ -42,4 +46,8 @@ inputSearchTodo.addEventListener("input", (event) => {
       todo.classList.add("d-flex");
       todo.classList.remove("d-none");
     });
-});
+};
+
+inputSearchTodo.addEventListener("input", filterTodo);
+formAaddTodo.addEventListener("submit", addTodo);
+todosContainer.addEventListener("click", deleteTodo);
